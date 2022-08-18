@@ -1,3 +1,5 @@
+import eventsCenter from "../EventsCenter.js";
+
 export default class SceneMain extends Phaser.Scene {
 
     constructor() {
@@ -7,10 +9,12 @@ export default class SceneMain extends Phaser.Scene {
     init() {
         // game variables
         this.xpCount = 0;
+        this.xpToUpgrade = 1;
         
     };
 
     preload() {
+        //load assets + images
         this.load.image('vivi', 'assets/vivi.png');
         this.load.image('orb', 'assets/ring.png');
     }
@@ -19,13 +23,15 @@ export default class SceneMain extends Phaser.Scene {
 
     create() {
 
+        this.scene.run('SceneUI');
+        this.scene.run('SceneUpgrade');
 
         this.add.rectangle(0, 0, 1680, 1050, 0x000000).setOrigin(0, 0);
-        this.xpText = this.add.text(16, 16, 'XP: 0', { fontSize: '32px', fill: '#FFF' }).setScrollFactor(0);
+        //this.xpText = this.add.text(16, 16, 'XP: 0', { fontSize: '32px', fill: '#FFF' }).setScrollFactor(0);
         //box = this.add.rectangle(840, 525, 100, 100, 0x1d9c19);
         this.player = this.physics.add.sprite(840, 525, 'vivi');
         this.player.setScale(.1);
-        this.player.setCollideWorldBounds(true);
+        //this.player.setCollideWorldBounds(true);
         this.cursors = this.input.keyboard.createCursorKeys();
 
 
@@ -35,14 +41,20 @@ export default class SceneMain extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.xpgroup, this.collectOrb, null, this);
 
         this.cameras.main.startFollow(this.player);
+        this.scene.bringToTop('SceneUI');
+
+        eventsCenter.on('upgradeComplete', this.completeUpgrade, this);
+        eventsCenter.on('resumeGame', this.resumeGame, this);
     }
 
     update() {
 
         this.input.keyboard.on('keydown-' + 'ESC', function (event) {
+            eventsCenter.emit('pauseGame');
+            this.scene.pause();
             //this.scene.launch('ScenePause');
             //this.scene.pause();
-            this.scene.switch('ScenePause');
+            //this.scene.run('ScenePause');
         }, this);
 
         if (this.cursors.left.isDown) {
@@ -100,12 +112,30 @@ export default class SceneMain extends Phaser.Scene {
 
     }
 
+    resumeGame(){
+        this.scene.resume();
+    }
+
     collectOrb(player, xp) {
         xp.disableBody(true, true);
 
         this.xpCount += 1;
-        this.xpText.setText('XP: ' + this.xpCount);
+
+        eventsCenter.emit('xpCollect', this.xpCount);
+
+        if(this.xpCount == this.xpToUpgrade){
+            this.scene.pause();
+            //this.scene.launch('SceneUpgrade', this.player);
+            eventsCenter.emit('upgradeGet');
+            
+        }
 
         var xp = this.xpgroup.create(Phaser.Math.Between(50, 1590), Phaser.Math.Between(50, 1000), 'orb');//refine randomness
+    }
+
+    completeUpgrade(){
+        this.xpCount = 0;
+        this.xpToUpgrade = this.xpToUpgrade + 1;
+        this.scene.resume();
     }
 }

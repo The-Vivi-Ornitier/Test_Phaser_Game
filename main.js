@@ -1,11 +1,17 @@
 //imports
 import SceneMain from "./scenes/SceneMain.js";
-import ScenePause from "./scenes/ScenePause.js";
+//import ScenePause from "./scenes/ScenePause.js";
+import SceneUpgrade from "./scenes/SceneUpgrade.js";
+import SceneUI from "./scenes/SceneUI.js";
+
+import eventsCenter from './EventsCenter.js';
 
 
 //load scenes
 var sceneMain = new SceneMain();
-var scenePause = new ScenePause();
+//var scenePause = new ScenePause();
+var sceneUpgrade = new SceneUpgrade();
+var sceneUI = new SceneUI();
 
 
 var config = {
@@ -32,6 +38,8 @@ var game = new Phaser.Game(config);
 
 //add main scene to game
 game.scene.add('SceneMain', sceneMain);
-game.scene.add('ScenePause', scenePause);
+//game.scene.add('ScenePause', scenePause);
+game.scene.add('SceneUpgrade', sceneUpgrade);
+game.scene.add('SceneUI', sceneUI);
 
 game.scene.start('SceneMain');
