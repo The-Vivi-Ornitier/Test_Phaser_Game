@@ -25,20 +25,13 @@ var config = {
             debug: false
         }
     },
-    //scene: [sceneMain, scenePause]
-    /*scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }*/
 };
 
 var game = new Phaser.Game(config);
 
 
-//add main scene to game
+//add main scenes to game
 game.scene.add('SceneMain', sceneMain);
-//game.scene.add('ScenePause', scenePause);
 game.scene.add('SceneUpgrade', sceneUpgrade);
 game.scene.add('SceneUI', sceneUI);
 

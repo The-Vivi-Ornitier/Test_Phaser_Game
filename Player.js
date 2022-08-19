@@ -10,7 +10,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         scene.physics.world.enable(this);
         this.scene.add.existing(this);
 
-        
+
         this.body.maxVelocity.x = 400;
         this.body.maxVelocity.y = 400; //acceleration and drag logic, not a fan, might change
         this.body.setDamping(true);
@@ -18,6 +18,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         this.accel = 1200;
         this.xMove = 0;
         this.yMove = 0;
+
+
+        this.upgradeList = [];
     }
 
     update(keys){

@@ -8,7 +8,7 @@ export default class SceneUpgrade extends Phaser.Scene {
     }
 
     init(){
-        
+
         this.backText = this.add.text(840,1000, 'UPGRADE GET');
         this.upgrades;
     }
@@ -30,12 +30,12 @@ export default class SceneUpgrade extends Phaser.Scene {
     }
 
     //initialize upgrade choices on level
-    upgradeGet(){
+    upgradeGet(upgradeArray){
         //backText.setColor(0x000);
         this.scene.setVisible(true);
-        this.upgrade1 = new UpgradeCards(this, 150, 100);
-        this.upgrade2 = new UpgradeCards(this, 650, 100);
-        this.upgrade3 = new UpgradeCards(this, 1150, 100);
+        this.upgrade1 = new UpgradeCards(this, 150, 100, upgradeArray[Phaser.Math.Between(0,upgradeArray.length-1)]);
+        this.upgrade2 = new UpgradeCards(this, 650, 100, upgradeArray[Phaser.Math.Between(0,upgradeArray.length-1)]);
+        this.upgrade3 = new UpgradeCards(this, 1150, 100, upgradeArray[Phaser.Math.Between(0,upgradeArray.length-1)]);
         this.upgrades.add(this.upgrade1);
         this.upgrades.add(this.upgrade2);
         this.upgrades.add(this.upgrade3);
