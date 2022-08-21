@@ -21,6 +21,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
 
 
         this.upgradeList = [];
+
+        //listen for an upgrade to be selected and add it to the player
+        eventsCenter.on('selectedUpgrade', this.processUpgrade, this);
+    }
+
+    create(){
+        //eventsCenter.on('selectedUpgrade', this.processUpgrade(selectedUpgrade), this);
     }
 
     update(keys){
@@ -48,5 +55,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         }
 
         this.setAcceleration(this.accel*this.xMove, this.accel*this.yMove);
+    }
+
+    //add a given upgrade to the player
+    processUpgrade(selectedUpgrade){
+        this.upgradeList.push(selectedUpgrade);
+        //do upgrade stuff here
     }
 }

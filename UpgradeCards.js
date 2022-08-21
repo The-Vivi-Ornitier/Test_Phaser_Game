@@ -30,8 +30,11 @@ export default class UpgradeCards extends Phaser.GameObjects.Sprite {
     create() {
     }
  
+
+    //when this card is clicked, tell everyone which one it was
     selectUpgrade(selectedUpgrade) {
         console.log('upgrade ' + selectedUpgrade.id + ' clicked');
+        eventsCenter.emit('selectedUpgrade', selectedUpgrade);
     }
 
 }
