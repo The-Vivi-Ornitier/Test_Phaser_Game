@@ -8,7 +8,7 @@ export default class SceneUpgrade extends Phaser.Scene {
     }
 
     init(){
-
+        
     }
 
     create(upgradeArray) {
@@ -27,7 +27,7 @@ export default class SceneUpgrade extends Phaser.Scene {
 
 
         this.backText.on('pointerdown', () => this.closeUpgrades());
-        eventsCenter.on('selectedUpgrade', this.closeUpgrades, this)
+        eventsCenter.once('selectedUpgrade', this.closeUpgrades, this);
     }
  
     //test button to continue without an upgrade
@@ -35,7 +35,7 @@ export default class SceneUpgrade extends Phaser.Scene {
     closeUpgrades() {
          //this.upgrades.destroy(true,true);//empty group and delete the old graphics (dont think this is necessary, should be included in scene.stop)
          eventsCenter.emit('upgradeComplete');
-         this.scene.stop()
+         this.scene.stop();
     }
 
 }

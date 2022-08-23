@@ -5,8 +5,8 @@ export default class Upgrade1 extends Upgrade{
     constructor(){
         super();
         //upgrade info
-        this.name = 'Upgrade 1';
-        this.desc = 'Upgrade 1 Description test test test';
+        this.name = 'Speed Upgrade';
+        this.desc = 'Increase speed multiplier by 1x';
         this.icon = 'upgrade_icon_key';
         this.id = '1';
 
@@ -20,7 +20,9 @@ export default class Upgrade1 extends Upgrade{
         this.damAdd = 0;
         this.damMul = 1;
         this.speedAdd = 0;
-        this.speedMul = 1;
+        this.speedMul = 2;
+
+        this.attackSpeedAdd = 0;
     }
 
 

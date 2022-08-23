@@ -2,14 +2,15 @@ import eventsCenter from "./EventsCenter.js";
 
 export default class Bullet extends Phaser.Physics.Arcade.Sprite {
 
-    constructor(scene, x, y)
+    constructor(scene, x, y, damage)
     {
         super(scene, x, y, 'circleTexture');
         
         this.scene.add.existing(this);
         scene.physics.add.existing(this);
         scene.physics.world.enableBody(this);
-
+        
+        this.damage = damage;
         //this.setTexture('circleTexture');
         //this.setPosition(x, y);
     }

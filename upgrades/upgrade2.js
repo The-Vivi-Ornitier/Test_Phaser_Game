@@ -5,8 +5,8 @@ export default class Upgrade2 extends Upgrade{
     constructor(){
         super();
         //upgrade info
-        this.name = 'Upgrade 2';
-        this.desc = 'Upgrade 2 Description';
+        this.name = 'Damage Upgrade';
+        this.desc = 'Increase base damage by 1';
         this.icon = 'upgrade_icon_key';
         this.id = '2';
 
@@ -17,10 +17,12 @@ export default class Upgrade2 extends Upgrade{
         
 
         //save stat change information here to be loaded onto the character when chosen
-        this.damAdd = 0;
+        this.damAdd = 1;
         this.damMul = 1;
         this.speedAdd = 0;
         this.speedMul = 1;
+    
+        this.attackSpeedAdd = 0;
     }
 
 

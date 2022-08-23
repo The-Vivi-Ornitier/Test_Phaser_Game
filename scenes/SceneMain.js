@@ -116,7 +116,7 @@ export default class SceneMain extends Phaser.Scene {
     }
 
     fireBullet(){
-        var bullet = this.physics.add.existing(new Bullet(this, this.player.x, this.player.y));
+        var bullet = this.physics.add.existing(new Bullet(this, this.player.x, this.player.y, this.player.damFinal));
         this.bulletGroup.add(bullet);
         this.bulletGroup.setVelocity(0,-500);
         //this.bulletGroup.create(this.player.x, this.player.y, 'circleTexture');
@@ -143,7 +143,7 @@ export default class SceneMain extends Phaser.Scene {
     //fires when you finish taking an upgrade
     completeUpgrade() {
         this.xpCount = 0;
-        this.xpToUpgrade = this.xpToUpgrade + 1;
+        this.xpToUpgrade += 1;
         this.scene.resume();
     }
 
@@ -153,7 +153,7 @@ export default class SceneMain extends Phaser.Scene {
 
     enemyHit(enemy, bullet){
         bullet.destroy();
-        enemy.shot();
+        enemy.shot(bullet);
         console.log('pewpew');
     }
 

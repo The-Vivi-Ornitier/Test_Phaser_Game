@@ -40,8 +40,8 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
     }
 
     //calls when the enemy is hit
-    shot(){
-        this.health-=1;
+    shot(bullet){
+        this.health-=bullet.damage;
         if(this.health <1){
 
             this.scene.xpgroup.create(this.x, this.y, 'orb');
