@@ -66,13 +66,15 @@ export default class SceneMain extends Phaser.Scene {
         this.summonEnemy();
 
         //init bullet making logic
-        this.bulletGroup = this.physics.add.group();
+        this.primaryBulletGroup = this.physics.add.group();//bullet group for primary weapon
         this.bulletTimer = this.time.addEvent({
             delay: 500,
             loop: true,
             callback: this.fireBullet,
             callbackScope: this
         })
+
+        this.bulletGroup = this.physics.add.group();//bullet broup to test collision for ALL bullets
 
         //test xp logic
         this.xpgroup = this.physics.add.group();
@@ -89,6 +91,7 @@ export default class SceneMain extends Phaser.Scene {
         //set listeners
         eventsCenter.on('upgradeComplete', this.completeUpgrade, this);
         eventsCenter.on('resumeGame', this.resumeGame, this);
+        eventsCenter.on('removeUpgrade', this.removeUpgrade, this);
         this.input.keyboard.on('keydown-ESC', this.pauseGame, this);
     }
 
@@ -118,7 +121,8 @@ export default class SceneMain extends Phaser.Scene {
     fireBullet(){
         var bullet = this.physics.add.existing(new Bullet(this, this.player.x, this.player.y, this.player.damFinal));
         this.bulletGroup.add(bullet);
-        this.bulletGroup.setVelocity(0,-500);
+        this.primaryBulletGroup.add(bullet)
+        bullet.setVelocity(0,-500);
         //this.bulletGroup.create(this.player.x, this.player.y, 'circleTexture');
         //this.
     }
@@ -145,6 +149,13 @@ export default class SceneMain extends Phaser.Scene {
         this.xpCount = 0;
         this.xpToUpgrade += 1;
         this.scene.resume();
+    }
+
+    removeUpgrade(finishedUpgrade){
+        const index = upgradeArray.indexOf(finishedUpgrade);
+        if (index > -1) { // only splice array when item is found
+            upgradeArray.splice(index, 1); // 2nd parameter means remove one item only
+        }
     }
 
     playerHit(){

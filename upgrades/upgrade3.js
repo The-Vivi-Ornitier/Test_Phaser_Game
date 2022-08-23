@@ -29,4 +29,14 @@ export default class Upgrade3 extends Upgrade{
     fireBullet(damage, effects){
         //if an upgrade fires additional shots, logic goes here
     }
+
+    updateOnce(scene){
+        //this will be called only once when the upgrade is first taken
+
+
+        this.currentLevel += 1;
+        if(this.currentLevel >= this.maxLevel){
+            eventsCenter.emit('removeUpgrade', this);
+        }
+    }
 }

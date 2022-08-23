@@ -71,6 +71,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
     //add a given upgrade to the player
     processUpgrade(selectedUpgrade){
         this.upgradeList.push(selectedUpgrade);
+        selectedUpgrade.updateOnce(this.scene);
         //do upgrade stuff here
         this.damBase += selectedUpgrade.damAdd;
         this.damMul += selectedUpgrade.damMul

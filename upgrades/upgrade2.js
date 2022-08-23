@@ -13,7 +13,7 @@ export default class Upgrade2 extends Upgrade{
         this.type = 'upgrade';//useful for grouping upgrades
 
         this.currentLevel = 0;
-        this.maxLevel = 5;
+        this.maxLevel = 999;//make this upgrade pretty much always available as a default, just in case
         
 
         //save stat change information here to be loaded onto the character when chosen
@@ -28,5 +28,15 @@ export default class Upgrade2 extends Upgrade{
 
     fireBullet(damage, effects){
         //if an upgrade fires additional shots, logic goes here
+    }
+
+    updateOnce(scene){
+        //this will be called only once when the upgrade is first taken
+
+
+        this.currentLevel += 1;
+        if(this.currentLevel >= this.maxLevel){
+            eventsCenter.emit('removeUpgrade', this);
+        }
     }
 }

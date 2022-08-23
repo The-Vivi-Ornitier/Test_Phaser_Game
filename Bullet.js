@@ -19,7 +19,7 @@ export default class Bullet extends Phaser.Physics.Arcade.Sprite {
     {
         super.preUpdate(time, delta);
 
-        if(this.y <= 0){
+        if(this.y <= 0 || this.y >= 1050){
             this.destroy();
         }
     }

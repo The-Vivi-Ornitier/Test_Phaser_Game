@@ -32,7 +32,7 @@ export default class SceneUpgrade extends Phaser.Scene {
  
     //test button to continue without an upgrade
     //also called after an upgrade is selected to clean up
-    closeUpgrades() {
+    closeUpgrades(selectedUpgrade) {
          //this.upgrades.destroy(true,true);//empty group and delete the old graphics (dont think this is necessary, should be included in scene.stop)
          eventsCenter.emit('upgradeComplete');
          this.scene.stop();

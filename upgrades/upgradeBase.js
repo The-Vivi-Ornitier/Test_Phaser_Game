@@ -1,3 +1,5 @@
+import eventsCenter from "../EventsCenter.js";
+
 export default class Upgrade{
 
     constructor(){
@@ -17,10 +19,20 @@ export default class Upgrade{
         this.damMul = 1;
         this.speedAdd = 0;
         this.speedMul = 1;
+
+        this.attackSpeedAdd = 0;
     }
 
 
-    fireBullet(damage, effects){
+    updateEvery(damage, effects){
         //if an upgrade fires additional shots, logic goes here
+    }
+
+    updateOnce(scene){
+        //this will be called only once when the upgrade is first taken
+        this.currentLevel += 1;
+        if(this.currentLevel >= this.maxLevel){
+            eventsCenter.emit('removeUpgrade', this);
+        }
     }
 }
