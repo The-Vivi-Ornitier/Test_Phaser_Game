@@ -2,6 +2,7 @@ import eventsCenter from "../EventsCenter.js";
 import Player from "../Player.js";
 import Enemy from "../Enemy.js";
 import { upgradeArray } from "../upgrades/upgradesHandler.js";
+import Bullet from "../Bullet.js";
 
 export default class SceneMain extends Phaser.Scene {
 
@@ -34,6 +35,15 @@ export default class SceneMain extends Phaser.Scene {
         //  32px radius on the corners
         this.enemyGraphic.fillRoundedRect(0, 0, 100, 100, 32);
         this.enemyGraphic.generateTexture('enemyTexture', 100, 100);
+
+        var circle = new Phaser.Geom.Circle(10, 10, 10);
+        this.circleGraphic = this.add.graphics();
+        this.circleGraphic.fillStyle(0xff0000, 1);
+        this.circleGraphic.fillCircleShape(circle);
+        //this.circleGraphic.fillStyle(0xff0000, 1);
+        //this.circleGraphic.strokeCircle(0, 0, 10);
+
+        this.circleGraphic.generateTexture('circleTexture', 20, 20);
     }
 
 
@@ -51,13 +61,18 @@ export default class SceneMain extends Phaser.Scene {
         this.player.setCollideWorldBounds(true);
         this.keys = this.input.keyboard.createCursorKeys();
 
-
-        //just make one enemy at the start to test
-        this.tempEnemy = this.physics.add.existing(new Enemy(this, 0, 0));
+        //summon one starting enemy
         this.enemyGroup = this.physics.add.group();
-        this.enemyGroup.add(this.tempEnemy);
-        this.tempEnemy.setCollideWorldBounds(true);
-        //this.physics.add.existing(tempEnemy);
+        this.summonEnemy();
+
+        //init bullet making logic
+        this.bulletGroup = this.physics.add.group();
+        this.bulletTimer = this.time.addEvent({
+            delay: 500,
+            loop: true,
+            callback: this.fireBullet,
+            callbackScope: this
+        })
 
         //test xp logic
         this.xpgroup = this.physics.add.group();
@@ -65,6 +80,7 @@ export default class SceneMain extends Phaser.Scene {
 
         this.physics.add.overlap(this.player, this.xpgroup, this.collectOrb, null, this);
         this.physics.add.overlap(this.player, this.enemyGroup, this.playerHit, null, this);
+        this.physics.add.overlap(this.enemyGroup, this.bulletGroup, this.enemyHit, null, this);
 
         //this.cameras.main.startFollow(this.player);//maybe this is better?
         this.scene.bringToTop('SceneUI');
@@ -78,6 +94,7 @@ export default class SceneMain extends Phaser.Scene {
 
     update() {
 
+        this.bulletTimer;
 
         this.player.update(this.keys); //pass inputs to player character class
 
@@ -98,6 +115,14 @@ export default class SceneMain extends Phaser.Scene {
         this.scene.resume();
     }
 
+    fireBullet(){
+        var bullet = this.physics.add.existing(new Bullet(this, this.player.x, this.player.y));
+        this.bulletGroup.add(bullet);
+        this.bulletGroup.setVelocity(0,-500);
+        //this.bulletGroup.create(this.player.x, this.player.y, 'circleTexture');
+        //this.
+    }
+
     //when you pick up xp
     collectOrb(player, xp) {
         xp.disableBody(true, true);
@@ -112,7 +137,7 @@ export default class SceneMain extends Phaser.Scene {
 
         }
 
-        var xp = this.xpgroup.create(Phaser.Math.Between(50, 1590), Phaser.Math.Between(50, 1000), 'orb');//refine randomness
+        //var xp = this.xpgroup.create(Phaser.Math.Between(50, 1590), Phaser.Math.Between(50, 1000), 'orb');//refine randomness
     }
 
     //fires when you finish taking an upgrade
@@ -124,5 +149,18 @@ export default class SceneMain extends Phaser.Scene {
 
     playerHit(){
         console.log('dedlol')
+    }
+
+    enemyHit(enemy, bullet){
+        bullet.destroy();
+        enemy.shot();
+        console.log('pewpew');
+    }
+
+    summonEnemy(){
+        var tempEnemy = this.physics.add.existing(new Enemy(this, Phaser.Math.Between(0,1680), 0));
+        //this.enemyGroup = this.physics.add.group();
+        this.enemyGroup.add(tempEnemy);
+        tempEnemy.setCollideWorldBounds(true);
     }
 }

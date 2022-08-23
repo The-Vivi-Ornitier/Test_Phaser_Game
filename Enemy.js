@@ -21,6 +21,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.xMove = 0;
         this.yMove = 0;
 
+        this.health = 2;
 
         //this.upgradeList = [];
 
@@ -35,6 +36,17 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
     update(playerX, playerY){
         //this.physics.moveToObject(player);
         //this.physics.moveTo(this, playerX, playerY);
-        this.setAcceleration(50);
+        //this.setAcceleration(50);
+    }
+
+    //calls when the enemy is hit
+    shot(){
+        this.health-=1;
+        if(this.health <1){
+
+            this.scene.xpgroup.create(this.x, this.y, 'orb');
+            this.scene.summonEnemy();
+            this.destroy();
+        }
     }
 }
