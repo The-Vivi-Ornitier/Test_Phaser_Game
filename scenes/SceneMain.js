@@ -12,6 +12,7 @@ export default class SceneMain extends Phaser.Scene {
 
     init() {
         // game variables
+        this.killCount = 0;
         this.xpCount = 0;
         this.xpToUpgrade = 1;
         this.upgradeCount = 3;
@@ -169,7 +170,10 @@ export default class SceneMain extends Phaser.Scene {
     }
 
     summonEnemy(){
-        var tempEnemy = this.physics.add.existing(new Enemy(this, Phaser.Math.Between(0,1680), 0));
+        //probably shouldn't count kills here, but for now the only time we call this is when one dies, so....
+        this.killCount+=1;
+        var health = 2*(Math.floor(1+this.killCount/5));
+        var tempEnemy = this.physics.add.existing(new Enemy(this, Phaser.Math.Between(0,1680), 0, health));
         //this.enemyGroup = this.physics.add.group();
         this.enemyGroup.add(tempEnemy);
         tempEnemy.setCollideWorldBounds(true);

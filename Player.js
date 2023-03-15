@@ -74,11 +74,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         selectedUpgrade.updateOnce(this.scene);
         //do upgrade stuff here
         this.damBase += selectedUpgrade.damAdd;
-        this.damMul += selectedUpgrade.damMul
+        this.damMul += selectedUpgrade.damMul;
         this.damFinal = this.damBase * this.damMul;
 
         this.speedBase += selectedUpgrade.speedAdd;
-        this.speedMul += selectedUpgrade.speedMul
+        this.speedMul += selectedUpgrade.speedMul;
         this.speedFinal = this.speedBase * this.speedMul;
 
         this.body.maxVelocity.x = this.speedFinal;

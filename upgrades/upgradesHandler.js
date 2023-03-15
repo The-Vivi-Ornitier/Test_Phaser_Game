@@ -6,4 +6,5 @@ import Upgrade4 from "./upgrade4.js";
 //this is gross and theres gotta be a better way to do this.
 
 export let upgradeArray = [new Upgrade1, new Upgrade2, new Upgrade3, new Upgrade4];
+//export let upgradeArray = [new Upgrade3];
 

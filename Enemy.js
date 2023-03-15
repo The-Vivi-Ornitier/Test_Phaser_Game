@@ -2,7 +2,7 @@ import eventsCenter from "./EventsCenter.js";
 
 export default class Enemy extends Phaser.Physics.Arcade.Sprite{
 
-    constructor(scene, x, y){
+    constructor(scene, x, y, health){
 
         super(scene, x, y, 'enemyTexture'); // The frame is optional 
         //this= this.physics.add.sprite(840, 525, 'vivi');
@@ -20,8 +20,9 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
         this.accel = 1200;
         this.xMove = 0;
         this.yMove = 0;
+        this.deadFlag = 0;
 
-        this.health = 2;
+        this.health = health??2;
 
         //this.upgradeList = [];
 
@@ -41,11 +42,13 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
 
     //calls when the enemy is hit
     shot(bullet){
+        var scene = this.scene;
         this.health-=bullet.damage;
-        if(this.health <1){
+        if(this.health <1 && this.deadFlag == 0){
 
-            this.scene.xpgroup.create(this.x, this.y, 'orb');
-            this.scene.summonEnemy();
+            this.deadFlag = 1;
+            scene.xpgroup.create(this.x, this.y, 'orb');//bug - crashes if you kill enemy while picking up exp on level i think
+            scene.summonEnemy();
             this.destroy();
         }
     }

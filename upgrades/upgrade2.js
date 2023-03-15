@@ -1,4 +1,5 @@
 import Upgrade from "./upgradeBase.js";
+import eventsCenter from "../EventsCenter.js"
 
 export default class Upgrade2 extends Upgrade{
 
@@ -18,9 +19,9 @@ export default class Upgrade2 extends Upgrade{
 
         //save stat change information here to be loaded onto the character when chosen
         this.damAdd = 1;
-        this.damMul = 1;
+        this.damMul = 0;
         this.speedAdd = 0;
-        this.speedMul = 1;
+        this.speedMul = 0;
     
         this.attackSpeedAdd = 0;
     }
