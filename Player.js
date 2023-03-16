@@ -10,6 +10,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         scene.physics.world.enable(this);
         this.scene.add.existing(this);
 
+        this.invulnFlag = 0;
+        this.dead = 0;
 
         this.body.maxVelocity.x = 400;
         this.body.maxVelocity.y = 400; //acceleration and drag logic, not a fan, might change
@@ -33,17 +35,32 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         this.attackSpeedBase = 500;
         this.attackSpeedMul = 1;
 
+        this.pierce = 0;
+
         //listen for an upgrade to be selected and add it to the player
         eventsCenter.on('selectedUpgrade', this.processUpgrade, this);
+        eventsCenter.on('playerHit', this.receiveDamage, this);
+        eventsCenter.on('playerDead', this.DIE, this);
     }
 
     create(){
         //eventsCenter.on('selectedUpgrade', this.processUpgrade(selectedUpgrade), this);
     }
 
+    init(){
+        this.dead = 0;
+    }
+
+    DIE(){
+        //this.events.off()
+        eventsCenter.off('selectedUpgrade', this.processUpgrade, this);
+        eventsCenter.off('playerHit', this.receiveDamage, this);
+        eventsCenter.off('playerDead', this.DIE, this);
+        //eventsCenter.off();
+        this.destroy();
+    }
+
     update(keys){
-
-
 
         //update movement
         if(keys.left.isDown && !keys.right.isDown){
@@ -87,5 +104,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite{
         
         this.attackSpeedMul += selectedUpgrade.attackSpeedAdd;
         this.scene.bulletTimer.timeScale = this.attackSpeedMul;
+    }
+
+    receiveDamage(){
+        
+    }
+
+    stopInvuln(){
+        this.invulnFlag = 0;
     }
 }

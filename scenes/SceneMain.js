@@ -8,15 +8,23 @@ export default class SceneMain extends Phaser.Scene {
 
     constructor() {
         super("SceneMain");
+        //set listeners
+        eventsCenter.on('upgradeComplete', this.completeUpgrade, this);
+        eventsCenter.on('resumeGame', this.resumeGame, this);
+        eventsCenter.on('removeUpgrade', this.removeUpgrade, this);
+        eventsCenter.on('playerDeath', this.playerDeath, this);
     }
 
     init() {
         // game variables
-        this.killCount = 0;
+        this.playerDead = 1;
+        this.enemySpawnCount = 0;
         this.xpCount = 0;
         this.xpToUpgrade = 1;
         this.upgradeCount = 3;
         this.upgrades = upgradeArray;
+
+        this.invulnFlag = 0;
         //this.upgradeArray = upgradeArray;
         //temp "save file" of which upgrades are unlocked
         this.unlockedIDs = ['1', '2', '3'];
@@ -52,19 +60,32 @@ export default class SceneMain extends Phaser.Scene {
     create() {
 
         //run other scenes simul
-        this.scene.run('SceneUI');
+        this.scene.launch('SceneUI');
         //this.scene.run('SceneUpgrade');//should maybe not be always up? fixed :)
 
 
         //load player and get inputs
+        this.playerDead = 1;
+        if (typeof this.player !== 'undefined') {
+            // the player already exists
+        }
         this.player = this.physics.add.existing(new Player(this, 840, 525));
         this.player.setScale(.1);
         this.player.setCollideWorldBounds(true);
+        this.playerDead = 0;
         this.keys = this.input.keyboard.createCursorKeys();
 
         //summon one starting enemy
         this.enemyGroup = this.physics.add.group();
         this.summonEnemy();
+
+        //init timer for spawning enemies
+        this.enemySpawnTimer = this.time.addEvent({
+            delay: 3000,
+            loop: true,
+            callback: this.summonEnemy,
+            callbackScope: this
+        })
 
         //init bullet making logic
         this.primaryBulletGroup = this.physics.add.group();//bullet group for primary weapon
@@ -88,25 +109,28 @@ export default class SceneMain extends Phaser.Scene {
         //this.cameras.main.startFollow(this.player);//maybe this is better?
         this.scene.bringToTop('SceneUI');
 
-
-        //set listeners
-        eventsCenter.on('upgradeComplete', this.completeUpgrade, this);
-        eventsCenter.on('resumeGame', this.resumeGame, this);
-        eventsCenter.on('removeUpgrade', this.removeUpgrade, this);
+        
         this.input.keyboard.on('keydown-ESC', this.pauseGame, this);
+        
     }
 
     update() {
 
         this.bulletTimer;
 
-        this.player.update(this.keys); //pass inputs to player character class
+        if (this.playerDead == 0) {
+            // if the player already exists
+            this.player.update(this.keys); //pass inputs to player character class
 
-
-        //make enemy run to player
+            //make enemy run to player
         this.enemyGroup.children.each(child => {
             this.physics.moveToObject(child, this.player, 250);
         })
+        }
+        
+
+
+        
 
     }
 
@@ -120,7 +144,7 @@ export default class SceneMain extends Phaser.Scene {
     }
 
     fireBullet(){
-        var bullet = this.physics.add.existing(new Bullet(this, this.player.x, this.player.y, this.player.damFinal));
+        var bullet = this.physics.add.existing(new Bullet(this, this.player.x, this.player.y, this.player.damFinal, this.player.pierce));
         this.bulletGroup.add(bullet);
         this.primaryBulletGroup.add(bullet)
         bullet.setVelocity(0,-500);
@@ -160,20 +184,57 @@ export default class SceneMain extends Phaser.Scene {
     }
 
     playerHit(){
+
+        if(!this.invulnFlag){
+            this.invulnFlag = 1;//start invuln period
+
+            eventsCenter.emit('playerHealthUpdate', -1);
+
+            this.invulnTimer = this.time.addEvent({
+                delay: 1000,
+                loop: false,
+                callback: this.stopInvuln,
+                callbackScope: this
+            })
+        }
+
+        //eventsCenter.emit('playerHit');
         console.log('dedlol')
     }
 
+    stopInvuln(){
+        this.invulnFlag = 0;
+    }
+
+    playerDeath(){
+        this.playerDead = 1;
+        eventsCenter.emit('playerDead');
+        this.scene.pause();
+        this.player.destroy();
+        this.scene.launch('SceneEndGame');
+        this.scene.stop('SceneUI');
+        this.scene.stop();
+
+    }
+
     enemyHit(enemy, bullet){
-        bullet.destroy();
-        enemy.shot(bullet);
-        console.log('pewpew');
+        //check if this bullet has already damaged the enemy
+        if(!bullet.enemiesHit.includes(enemy.ID)){
+            if(bullet.pierce == 0){//check if it pierces
+                bullet.destroy();
+            }else{
+                bullet.pierce--;
+                bullet.enemiesHit.push(enemy.ID);
+            }
+            enemy.shot(bullet);//calculate the hit
+            console.log('pewpew');
+        }
     }
 
     summonEnemy(){
-        //probably shouldn't count kills here, but for now the only time we call this is when one dies, so....
-        this.killCount+=1;
-        var health = 2*(Math.floor(1+this.killCount/5));
-        var tempEnemy = this.physics.add.existing(new Enemy(this, Phaser.Math.Between(0,1680), 0, health));
+        this.enemySpawnCount+=1;
+        var health = 2*(Math.floor(1+this.enemySpawnCount/5));//math for scaling health
+        var tempEnemy = this.physics.add.existing(new Enemy(this, Phaser.Math.Between(0,1680), 0, health, this.enemySpawnCount));
         //this.enemyGroup = this.physics.add.group();
         this.enemyGroup.add(tempEnemy);
         tempEnemy.setCollideWorldBounds(true);

@@ -2,7 +2,7 @@ import eventsCenter from "./EventsCenter.js";
 
 export default class Enemy extends Phaser.Physics.Arcade.Sprite{
 
-    constructor(scene, x, y, health){
+    constructor(scene, x, y, health, ID){
 
         super(scene, x, y, 'enemyTexture'); // The frame is optional 
         //this= this.physics.add.sprite(840, 525, 'vivi');
@@ -12,6 +12,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite{
         scene.physics.add.existing(this);
         scene.physics.world.enableBody(this);
 
+        this.ID = ID;
 
         this.body.maxVelocity.x = 200;
         this.body.maxVelocity.y = 200; //acceleration and drag logic, not a fan, might change
