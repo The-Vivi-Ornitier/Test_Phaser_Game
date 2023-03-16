@@ -13,6 +13,9 @@ export default class SceneMain extends Phaser.Scene {
         eventsCenter.on('resumeGame', this.resumeGame, this);
         eventsCenter.on('removeUpgrade', this.removeUpgrade, this);
         eventsCenter.on('playerDeath', this.playerDeath, this);
+
+        this.unlockedUpgrades = new Array();
+        this.unlockedUpgrades.push('2');
     }
 
     init() {
@@ -22,13 +25,19 @@ export default class SceneMain extends Phaser.Scene {
         this.xpCount = 0;
         this.xpToUpgrade = 1;
         this.upgradeCount = 3;
-        this.upgrades = upgradeArray;
+        this.upgrades = new Array();
 
         this.invulnFlag = 0;
-        //this.upgradeArray = upgradeArray;
         //temp "save file" of which upgrades are unlocked
-        this.unlockedIDs = ['1', '2', '3'];
+        this.unlockedUpgrades.forEach(upgradeID => {
+            upgradeArray.forEach(upgrade => {
+                if(upgradeID == upgrade.id){
+                    this.upgrades.push(upgrade);
+                }
+            });
+        });
 
+        var test = true;
         //load upgrades here?
 
     };
@@ -207,12 +216,16 @@ export default class SceneMain extends Phaser.Scene {
     }
 
     playerDeath(){
+        if(!this.unlockedUpgrades.includes('1')){
+            this.unlockedUpgrades.push('1');
+        }
         this.playerDead = 1;
         eventsCenter.emit('playerDead');
         this.scene.pause();
         this.player.destroy();
         this.scene.launch('SceneEndGame');
         this.scene.stop('SceneUI');
+        eventsCenter.emit('updateUpgradeSaveArray', this.unlockedUpgrades);
         this.scene.stop();
 
     }

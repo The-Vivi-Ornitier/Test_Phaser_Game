@@ -4,6 +4,8 @@ export default class SceneEndGame extends Phaser.Scene {
 
     constructor() {
         super("SceneEndGame");
+        this.unlockedUpgrades = new Array();
+        eventsCenter.on('updateUpgradeSaveArray', this.updateUpgrades, this);
     }
 
     init() {
@@ -36,7 +38,23 @@ export default class SceneEndGame extends Phaser.Scene {
     }
     
     returnToMenu(){
+
+        //save
+            var file = {
+                unlockedUpgrades: this.unlockedUpgrades
+            };
+            localStorage.setItem('save',JSON.stringify(file));
+        
+            //load
+            //var file = JSON.parse(localStorage.getItem('save'));
+            //Game.scene.score = file.score;
+            //Game.scene.visits = file.visits;
+
         this.scene.launch('SceneMainMenu');
         this.scene.stop();
+    }
+
+    updateUpgrades(upgradeArray){
+        this.unlockedUpgrades = upgradeArray;
     }
 }

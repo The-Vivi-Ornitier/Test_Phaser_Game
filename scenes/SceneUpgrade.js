@@ -1,5 +1,5 @@
 import eventsCenter from "../EventsCenter.js";
-import UpgradeCards from "../UpgradeCards.js";
+import UpgradeCards from "../upgrades/UpgradeCards.js";
 
 export default class SceneUpgrade extends Phaser.Scene {
 

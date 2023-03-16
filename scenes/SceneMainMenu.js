@@ -4,6 +4,7 @@ export default class SceneMainMenu extends Phaser.Scene {
 
     constructor() {
         super("SceneMainMenu");
+        this.unlockedUpgrades = new Array();
     }
 
     init() {
@@ -16,6 +17,16 @@ export default class SceneMainMenu extends Phaser.Scene {
 
     create(){
 
+
+        //load
+        var file = JSON.parse(localStorage.getItem('save'));
+        if(file !== null){
+            if(file.unlockedUpgrades !== 'undefined'){
+                this.unlockedUpgrades = file.unlockedUpgrades;
+            }
+        }
+        //Game.scene.score = file.score;
+        //Game.scene.visits = file.visits;
 
         
 	const { width, height } = this.scale
