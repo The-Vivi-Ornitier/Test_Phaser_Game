@@ -14,7 +14,7 @@ export default class Upgrade1 extends Upgrade{
         this.type = 'upgrade';//useful for grouping upgrades
 
         this.currentLevel = 0;
-        this.maxLevel = 5;
+        this.maxLevel = 2;
         
 
         //save stat change information here to be loaded onto the character when chosen
@@ -31,13 +31,19 @@ export default class Upgrade1 extends Upgrade{
         //if an upgrade needs constant updating, do it here
     }
 
-    updateOnce(scene){
-        //this will be called only once when the upgrade is first taken
-
-
-        this.currentLevel += 1;
+    updateOnce(scene, upgradeList){
+        //this will be called only once when the upgrade is taken
+        var level = 0;
+        upgradeList.forEach(upgrade => {
+            if(upgrade.id == this.id){
+                level++;
+            }
+        });
+        this.currentLevel = level;
         if(this.currentLevel >= this.maxLevel){
-            eventsCenter.emit('removeUpgrade', this);
+            var thisUpgrade = new Array;
+            thisUpgrade.push(this);
+            eventsCenter.emit('removeUpgrade', thisUpgrade);
         }
     }
 }

@@ -12,6 +12,7 @@ export default class SceneMain extends Phaser.Scene {
         eventsCenter.on('upgradeComplete', this.completeUpgrade, this);
         eventsCenter.on('resumeGame', this.resumeGame, this);
         eventsCenter.on('removeUpgrade', this.removeUpgrade, this);
+        eventsCenter.on('addUpgradesID', this.addUpgradeByID, this);
         eventsCenter.on('playerDeath', this.playerDeath, this);
 
         this.unlockedUpgrades = new Array();
@@ -185,11 +186,33 @@ export default class SceneMain extends Phaser.Scene {
         this.scene.resume();
     }
 
-    removeUpgrade(finishedUpgrade){
-        const index = upgradeArray.indexOf(finishedUpgrade);
-        if (index > -1) { // only splice array when item is found
-            upgradeArray.splice(index, 1); // 2nd parameter means remove one item only
-        }
+    //remove upgrades from the deck
+    removeUpgrade(finishedUpgrades){
+        finishedUpgrades.forEach(upgrade => {
+            var index = this.upgrades.indexOf(upgrade);
+            if (index > -1) { // only splice array when item is found
+                this.upgrades.splice(index, 1); // 2nd parameter means remove one item only
+            }
+        });
+    }
+
+    //add upgrades that can be drawn on future level ups
+    addUpgrade(upgradesToAdd){
+        upgradesToAdd.forEach(upgrade => {
+                this.upgrades.push(upgrade); 
+        });
+    }
+
+    addUpgradeByID(upgradeids){
+        var upgradesToAdd = new Array();
+        upgradeids.forEach(id => {
+            upgradeArray.forEach(upgrade => {
+                if(upgrade.id == id){
+                    upgradesToAdd.push(upgrade);
+                }
+            });
+        });
+        this.addUpgrade(upgradesToAdd)
     }
 
     playerHit(){
